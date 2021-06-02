@@ -10,3 +10,21 @@
     -fx-spacing:       10;
     -fx-padding:       5;
 }
+
+.custom-text-field {
+    -fx-border-color: #666666;
+    -fx-border-radius: 4px;
+    -fx-text-box-border: transparent;
+    -fx-background-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-font-size: 16;
+}
+
+.custom-button {
+    -fx-border-color: #666666;
+    -fx-border-radius: 4px;
+    -fx-text-box-border: transparent;
+    -fx-background-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-font-size: 16;
+}
