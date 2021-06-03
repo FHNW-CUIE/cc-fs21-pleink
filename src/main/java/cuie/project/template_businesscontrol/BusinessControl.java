@@ -1,9 +1,14 @@
 package cuie.project.template_businesscontrol;
 
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javafx.beans.property.BooleanProperty;
@@ -22,6 +27,7 @@ public class BusinessControl extends Control {
     private static Locale CH = new Locale("de", "CH");
     private static final PseudoClass MANDATORY_CLASS = PseudoClass.getPseudoClass("mandatory");
     private static final PseudoClass INVALID_CLASS   = PseudoClass.getPseudoClass("invalid");
+    private final String CSV_RESOURCE = "/files/cantons.csv";
 
 
     //todo: durch die eigenen regulaeren Ausdruecke ersetzen
@@ -29,6 +35,8 @@ public class BusinessControl extends Control {
 
     private static final String INTEGER_REGEX    = "[+-]?[\\d'’]{1,14}";
     private static final Pattern INTEGER_PATTERN = Pattern.compile(INTEGER_REGEX);
+
+    private final Map<String, Canton> cantonMap = new HashMap<>();
 
     //todo: Integer bei Bedarf ersetzen
     private final IntegerProperty value       = new SimpleIntegerProperty();
@@ -57,6 +65,7 @@ public class BusinessControl extends Control {
 
     public BusinessControl() {
         initializeSelf();
+        initCantonList();
         addValueChangeListener();
     }
 
@@ -81,6 +90,26 @@ public class BusinessControl extends Control {
          getStyleClass().add("business-control");
 
          setValueAsText(convertToString(getValue()));
+    }
+
+    private void initCantonList() {
+
+        try {
+            File csvFile = new File((BusinessControl.class.getResource(CSV_RESOURCE).toURI()));
+            BufferedReader br = new BufferedReader(new FileReader(csvFile));
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                if (values.length == 3) {
+                    Canton c = new Canton(values[0], values[1], values[2]);
+                    cantonMap.put(c.getUrlName(), c);
+                } else {
+                    throw new IllegalArgumentException();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //todo: durch geeignete Konvertierungslogik ersetzen

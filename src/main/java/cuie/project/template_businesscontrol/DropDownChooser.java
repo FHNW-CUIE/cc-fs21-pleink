@@ -1,8 +1,8 @@
 package cuie.project.template_businesscontrol;
 
-import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
@@ -12,6 +12,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 class DropDownChooser extends VBox {
@@ -83,6 +87,8 @@ class DropDownChooser extends VBox {
     private final ImageView zug =
         new ImageView(new Image(DropDownChooser.class.getResource("/images/zug.png").toExternalForm()));
 
+    private List<ImageView> cantonImageView = new ArrayList<>();
+
 
     DropDownChooser(BusinessControl businessControl) {
         this.businessControl = businessControl;
@@ -117,16 +123,18 @@ class DropDownChooser extends VBox {
         mainVBox = new VBox(8);
         infoHBox = new HBox(8);
 
-        mapStackPane =
-            new StackPane(base, aargau, appenzellAusserrhoden, appenzellInnerrhoden, baselLand, baselStadt, bern,
+        cantonImageView.addAll(Arrays.asList(aargau, appenzellAusserrhoden, appenzellInnerrhoden, baselLand, baselStadt, bern,
                 fribourg, genf, glarus, graubuenden, jura, luzern, neuenburg, nidwalden, obwalden, schaffhausen, schwyz,
-                solothurn, stgallen, tessin, thurgau, uri, waadt, wallis, zuerich, zug);
+                solothurn, stgallen, tessin, thurgau, uri, waadt, wallis, zuerich, zug));
+
+        mapStackPane = new StackPane(base);
+        mapStackPane.getChildren().addAll(cantonImageView);
+
     }
 
     private void layoutParts() {
 
         HBox.setHgrow(spacer, Priority.ALWAYS);
-
 
         infoHBox.getChildren().addAll(shortName, longName, spacer, okButton);
         mainVBox.getChildren().addAll(mapStackPane, infoHBox);
@@ -143,34 +151,12 @@ class DropDownChooser extends VBox {
             //close popup
         });
 
-        aargau.setOnMouseClicked(event -> { colorizeImage(aargau); });
-        appenzellAusserrhoden.setOnMouseClicked(event -> { colorizeImage(appenzellAusserrhoden); });
-        appenzellInnerrhoden.setOnMouseClicked(event -> { colorizeImage(appenzellInnerrhoden); });
-        baselLand.setOnMouseClicked(event -> { colorizeImage(baselLand); });
-        baselStadt.setOnMouseClicked(event -> { colorizeImage(baselStadt); });
-        bern.setOnMouseClicked(event -> { colorizeImage(bern); });
-        fribourg.setOnMouseClicked(event -> { colorizeImage(fribourg); });
-        genf.setOnMouseClicked(event -> { colorizeImage(genf); });
-        glarus.setOnMouseClicked(event -> { colorizeImage(glarus); });
-        graubuenden.setOnMouseClicked(event -> { colorizeImage(graubuenden); });
-        jura.setOnMouseClicked(event -> { colorizeImage(jura); });
-        luzern.setOnMouseClicked(event -> { colorizeImage(luzern); });
-        neuenburg.setOnMouseClicked(event -> { colorizeImage(neuenburg); });
-        nidwalden.setOnMouseClicked(event -> { colorizeImage(nidwalden); });
-        obwalden.setOnMouseClicked(event -> { colorizeImage(obwalden); });
-        schaffhausen.setOnMouseClicked(event -> { colorizeImage(schaffhausen); });
-        schwyz.setOnMouseClicked(event -> { colorizeImage(schwyz); });
-        solothurn.setOnMouseClicked(event -> { colorizeImage(solothurn); });
-        stgallen.setOnMouseClicked(event -> { colorizeImage(stgallen); });
-        tessin.setOnMouseClicked(event -> { colorizeImage(tessin); });
-        thurgau.setOnMouseClicked(event -> { colorizeImage(thurgau); });
-        uri.setOnMouseClicked(event -> { colorizeImage(uri); });
-        waadt.setOnMouseClicked(event -> { colorizeImage(waadt); });
-        wallis.setOnMouseClicked(event -> { colorizeImage(wallis); });
-        zuerich.setOnMouseClicked(event -> { colorizeImage(zuerich); });
-        zug.setOnMouseClicked(event -> { colorizeImage(zug); });
-
-
+        cantonImageView.forEach(canton -> canton.setOnMouseClicked(event -> {
+            String name = canton.getImage().getUrl();
+            name = name.substring(name.lastIndexOf("/")+1, name.lastIndexOf("."));
+            System.out.println(name);
+            colorizeImage(canton);
+        }));
     }
 
 
@@ -178,36 +164,9 @@ class DropDownChooser extends VBox {
         ColorAdjust monochrome = new ColorAdjust();
         monochrome.setSaturation(-1);
 
-        aargau.setEffect(monochrome);
-        appenzellAusserrhoden.setEffect(monochrome);
-        appenzellInnerrhoden.setEffect(monochrome);
-        baselLand.setEffect(monochrome);
-        baselStadt.setEffect(monochrome);
-        bern.setEffect(monochrome);
-        fribourg.setEffect(monochrome);
-        genf.setEffect(monochrome);
-        glarus.setEffect(monochrome);
-        graubuenden.setEffect(monochrome);
-        jura.setEffect(monochrome);
-        luzern.setEffect(monochrome);
-        neuenburg.setEffect(monochrome);
-        nidwalden.setEffect(monochrome);
-        obwalden.setEffect(monochrome);
-        schaffhausen.setEffect(monochrome);
-        schwyz.setEffect(monochrome);
-        solothurn.setEffect(monochrome);
-        stgallen.setEffect(monochrome);
-        tessin.setEffect(monochrome);
-        thurgau.setEffect(monochrome);
-        uri.setEffect(monochrome);
-        waadt.setEffect(monochrome);
-        wallis.setEffect(monochrome);
-        zuerich.setEffect(monochrome);
-        zug.setEffect(monochrome);
+        cantonImageView.forEach(c -> c.setEffect(monochrome));
 
         canton.setEffect(null);
-
-
     }
 
 }
