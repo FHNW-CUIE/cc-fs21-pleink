@@ -3,6 +3,8 @@ package cuie.project.template_businesscontrol;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.PopupControl;
+import javafx.scene.control.SkinBase;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
@@ -12,13 +14,14 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
-class DropDownChooser extends VBox {
+class DropDownChooser extends PopupControl {
     private static final String STYLE_CSS = "dropDownChooser.css";
 
     private final BusinessControl businessControl;
@@ -100,10 +103,11 @@ class DropDownChooser extends VBox {
     }
 
     private void initializeSelf() {
+
         getStyleClass().add("drop-down-chooser");
 
         String stylesheet = getClass().getResource(STYLE_CSS).toExternalForm();
-        getStylesheets().add(stylesheet);
+        setStyle(stylesheet);
     }
 
     private void initializeParts() {
@@ -138,7 +142,7 @@ class DropDownChooser extends VBox {
 
         infoHBox.getChildren().addAll(shortName, longName, spacer, okButton);
         mainVBox.getChildren().addAll(mapStackPane, infoHBox);
-        getChildren().addAll(mainVBox);
+        getScene().setRoot(mainVBox);
 
     }
 

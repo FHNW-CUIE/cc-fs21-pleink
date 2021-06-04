@@ -9,10 +9,7 @@ import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.SkinBase;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -50,8 +47,7 @@ class BusinessSkin extends SkinBase<BusinessControl> {
     // all parts
     private TextField editableNode;
     private Label     readOnlyNode;
-    private Popup     popup;
-    private Pane      dropDownChooser;
+    private PopupControl popup;
     private Button    chooserButton;
 
     private StackPane drawingPane;
@@ -87,10 +83,7 @@ class BusinessSkin extends SkinBase<BusinessControl> {
         chooserButton = new Button(ANGLE_DOWN);
         chooserButton.getStyleClass().add("chooser-button");
 
-        dropDownChooser = new DropDownChooser(getSkinnable());
-
-        popup = new Popup();
-        popup.getContent().addAll(dropDownChooser);
+        popup = new DropDownChooser(getSkinnable());;
 
         drawingPane = new StackPane();
         drawingPane.getStyleClass().add("drawing-pane");
@@ -153,7 +146,7 @@ class BusinessSkin extends SkinBase<BusinessControl> {
 
         popup.setOnShown(event -> {
             chooserButton.setText(ANGLE_UP);
-            Point2D location = editableNode.localToScreen(editableNode.getWidth() - dropDownChooser.getPrefWidth() - 3,
+            Point2D location = editableNode.localToScreen(editableNode.getWidth() - popup.getWidth() - 3,
                                                           editableNode.getHeight() -3);
 
             popup.setX(location.getX());
