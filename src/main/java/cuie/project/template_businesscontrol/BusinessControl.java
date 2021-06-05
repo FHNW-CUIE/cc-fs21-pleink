@@ -22,9 +22,14 @@ public class BusinessControl extends Control {
 
 
     //todo: durch die eigenen regulaeren Ausdruecke ersetzen
-    private final List<Pattern> regexList = new ArrayList<>();
 
-    private static final String REGEX_ABBR_1 = "(^[a-z][a-z]$)";
+    private static final String REGEX_ABBR_1 = "(^[abfgjlnostuvz][grilseuwhzod]$)";
+    private static final String REGEX_ABBR_2 = "(^[fjlou]$)";
+    private static final String REGEX_NAME_1 = "(\\b[^\\d]+\\b)";
+
+    private static final Pattern PATTERN_ABBR_1 = Pattern.compile(REGEX_ABBR_1);
+    private static final Pattern PATTERN_ABBR_2 = Pattern.compile(REGEX_ABBR_2);
+    private static final Pattern PATTERN_NAME_1 = Pattern.compile(REGEX_NAME_1);
 
 
     private final Map<String, Canton> cantonMap = new LinkedHashMap<>();
@@ -56,7 +61,6 @@ public class BusinessControl extends Control {
 
     public BusinessControl() {
         initializeSelf();
-        initRegex();
         initCantonList();
         addValueChangeListener();
     }
@@ -68,12 +72,8 @@ public class BusinessControl extends Control {
 
     private void initializeSelf() {
          getStyleClass().add("business-control");
-
     }
 
-    private void initRegex() {
-        regexList.add(Pattern.compile(REGEX_ABBR_1));
-    }
 
     private void initCantonList() {
         try {
@@ -103,7 +103,7 @@ public class BusinessControl extends Control {
                 return;
             }
 
-            if (true) {
+            if (PATTERN_ABBR_1.matcher(userInput).matches() || PATTERN_ABBR_2.matcher(userInput).matches()) {
                 setInvalid(false);
                 setErrorMessage(null);
 
@@ -120,7 +120,7 @@ public class BusinessControl extends Control {
                 return;
             }
 
-            if (true) {
+            if (PATTERN_NAME_1.matcher(userInput).matches()) {
                 setInvalid(false);
                 setErrorMessage(null);
 
@@ -143,12 +143,28 @@ public class BusinessControl extends Control {
 
     public void formatAbbreviation() {
         System.out.println("format abbreviation");
-        setCantonValueByAbbreviation(getCantonAbbrAsText());
+        if (!getInvalid()) {
+            if (getCantonAbbrAsText().length() == 1) {
+                Optional<Map.Entry<String, Canton>> c = cantonMap.entrySet().stream().filter(e -> e.getValue().getAbbreviation().substring(0,1).toLowerCase().equals(getCantonAbbrAsText())).findFirst();
+                c.ifPresent(stringCantonEntry -> setCantonValue(stringCantonEntry.getValue()));
+            } else {
+                Optional<Map.Entry<String, Canton>> c = cantonMap.entrySet().stream().filter(e -> e.getValue().getAbbreviation().toLowerCase().equals(getCantonAbbrAsText())).findFirst();
+                c.ifPresent(stringCantonEntry -> setCantonValue(stringCantonEntry.getValue()));
+            }
+        }
     }
 
     public void formatName() {
         System.out.println("format name");
-        setCantonValueByName(getCantonNameAsText());
+        if (!getInvalid()) {
+            setCantonValueByName(getCantonNameAsText());
+        }
+
+    }
+
+    public boolean validCanton() {
+
+        return true;
     }
 
     public void loadFonts(String... font){
