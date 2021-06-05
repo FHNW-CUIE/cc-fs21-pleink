@@ -2,8 +2,6 @@ package cuie.project.template_businesscontrol;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.text.NumberFormat;
-import java.text.ParseException;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -14,8 +12,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.text.Font;
 
-//todo: umbenennen
-public class BusinessControl extends Control {
+public class CantonPicker extends Control {
     private static Locale CH = new Locale("de", "CH");
     private static final PseudoClass MANDATORY_CLASS = PseudoClass.getPseudoClass("mandatory");
     private static final PseudoClass INVALID_CLASS   = PseudoClass.getPseudoClass("invalid");
@@ -28,7 +25,6 @@ public class BusinessControl extends Control {
     private static final Pattern PATTERN_ABBR_1 = Pattern.compile(REGEX_ABBR_1);
     private static final Pattern PATTERN_ABBR_2 = Pattern.compile(REGEX_ABBR_2);
     private static final Pattern PATTERN_NAME_1 = Pattern.compile(REGEX_NAME_1);
-
 
     private final Map<String, Canton> cantonMap = new LinkedHashMap<>();
 
@@ -50,14 +46,12 @@ public class BusinessControl extends Control {
         }
     };
 
-    //todo: ergaenzen um convertible
-
     private final BooleanProperty readOnly     = new SimpleBooleanProperty();
     private final StringProperty  label        = new SimpleStringProperty();
     private final StringProperty  errorMessage = new SimpleStringProperty();
 
 
-    public BusinessControl() {
+    public CantonPicker() {
         initializeSelf();
         initCantonList();
         addValueChangeListener();
@@ -65,7 +59,7 @@ public class BusinessControl extends Control {
 
     @Override
     protected Skin<?> createDefaultSkin() {
-        return new BusinessSkin(this);
+        return new LegacySkin(this);
     }
 
     private void initializeSelf() {
@@ -75,7 +69,7 @@ public class BusinessControl extends Control {
 
     private void initCantonList() {
         try {
-            File csvFile = new File((BusinessControl.class.getResource(CSV_RESOURCE).toURI()));
+            File csvFile = new File((CantonPicker.class.getResource(CSV_RESOURCE).toURI()));
             BufferedReader br = new BufferedReader(new FileReader(csvFile, StandardCharsets.UTF_8));
             String line;
             while ((line = br.readLine()) != null) {
@@ -106,7 +100,7 @@ public class BusinessControl extends Control {
 
             } else {
                 setInvalid(true);
-                setErrorMessage("error");
+                setErrorMessage("incorrect canton abbreviation");
             }
         });
 
@@ -114,14 +108,6 @@ public class BusinessControl extends Control {
             System.out.println("userInput: ");
             System.out.println(userInput);
             System.out.println("-----");
-
-//            System.out.println("userInput UTF-8: ");
-//            System.out.println(new String(userInput.getBytes(StandardCharsets.UTF_8)));
-//            System.out.println("canton Zürich: ");
-//            String s = new String(cantonMap.get("zuerich").getName().getBytes(StandardCharsets.UTF_8));
-//            System.out.println(s);
-//            System.out.println("userInput == canton");
-//            System.out.println(userInput.equals(cantonMap.get("zuerich").getName()));
 
             if (isMandatory() && (userInput == null || userInput.isEmpty())) {
                 setInvalid(true);
@@ -135,7 +121,7 @@ public class BusinessControl extends Control {
 
             } else {
                 setInvalid(true);
-                setErrorMessage("error");
+                setErrorMessage("incorrect canton name");
             }
         });
 
@@ -145,10 +131,7 @@ public class BusinessControl extends Control {
             setCantonAbbrAsText(newValue.getAbbreviation().toUpperCase());
             setCantonNameAsText(newValue.getName());
         });
-
     }
-
-    //todo: Forgiving Format implementieren
 
     public void formatAbbreviation() {
         System.out.println("format abbreviation");
@@ -174,10 +157,9 @@ public class BusinessControl extends Control {
         System.out.println("format name");
         if (!getInvalid()) {
             Optional<Map.Entry<String, Canton>> c = cantonMap.entrySet().stream()
-                    .filter(e -> {
-                       return  (e.getValue().getName().toLowerCase().contains(getCantonNameAsText().toLowerCase())
-                                || e.getValue().getUrlName().toLowerCase().contains(getCantonNameAsText().toLowerCase()));
-                    }).findFirst();
+                    .filter(e -> (e.getValue().getName().toLowerCase().contains(getCantonNameAsText().toLowerCase())
+                                || e.getValue().getUrlName().toLowerCase().contains(getCantonNameAsText().toLowerCase()))
+                    ).findFirst();
 
             c.ifPresent(stringCantonEntry -> setCantonValue(stringCantonEntry.getValue()));
         }
@@ -206,7 +188,6 @@ public class BusinessControl extends Control {
             getStylesheets().add(stylesheet);
         }
     }
-
 
     public void reset() {
         setCantonAbbrAsText(getCantonValue().getAbbreviation());

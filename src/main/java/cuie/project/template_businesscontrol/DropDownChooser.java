@@ -1,6 +1,5 @@
 package cuie.project.template_businesscontrol;
 
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
@@ -11,7 +10,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +17,7 @@ import java.util.List;
 class DropDownChooser extends VBox {
     private static final String STYLE_CSS = "dropDownChooser.css";
 
-    private final BusinessControl businessControl;
+    private final CantonPicker cantonPicker;
 
     private VBox mainVBox;
     private StackPane mapStackPane;
@@ -85,9 +83,8 @@ class DropDownChooser extends VBox {
 
     private List<ImageView> cantonImageView = new ArrayList<>();
 
-
-    DropDownChooser(BusinessControl businessControl) {
-        this.businessControl = businessControl;
+    DropDownChooser(CantonPicker cantonPicker) {
+        this.cantonPicker = cantonPicker;
         initializeSelf();
         initializeParts();
         layoutParts();
@@ -124,7 +121,6 @@ class DropDownChooser extends VBox {
 
         mapStackPane = new StackPane(base);
         mapStackPane.getChildren().addAll(cantonImageView);
-
     }
 
     private void layoutParts() {
@@ -134,12 +130,11 @@ class DropDownChooser extends VBox {
         infoHBox.getChildren().addAll(shortName, longName, spacer);
         mainVBox.getChildren().addAll(mapStackPane, infoHBox);
         getChildren().addAll(mainVBox);
-
     }
 
     private void setupBindings() {
-        shortName.textProperty().bindBidirectional(businessControl.cantonAbbrAsTextProperty());
-        longName.textProperty().bindBidirectional(businessControl.cantonNameAsTextProperty());
+        shortName.textProperty().bindBidirectional(cantonPicker.cantonAbbrAsTextProperty());
+        longName.textProperty().bindBidirectional(cantonPicker.cantonNameAsTextProperty());
     }
 
     private void setupEventHandlers() {
@@ -150,41 +145,41 @@ class DropDownChooser extends VBox {
             System.out.println(name);
             System.out.println("-----");
             colorizeImage(canton);
-            businessControl.setCantonValueByUrlName(name);
+            cantonPicker.setCantonValueByUrlName(name);
         }));
 
         shortName.setOnAction(event -> {
-            businessControl.formatAbbreviation();
+            cantonPicker.formatAbbreviation();
         });
 
         shortName.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case ESCAPE:
-                    businessControl.reset();
+                    cantonPicker.reset();
                     event.consume();
                     break;
                 case UP:
-                    businessControl.increase();
+                    cantonPicker.increase();
                     event.consume();
                     break;
                 case DOWN:
-                    businessControl.decrease();
+                    cantonPicker.decrease();
                     event.consume();
                     break;
             }
         });
 
         longName.setOnAction(event -> {
-            businessControl.formatName();
+            cantonPicker.formatName();
         });
     }
 
     private void setupValueChangeListener() {
-        businessControl.cantonValueProperty().addListener((observable, oldValue, newValue) -> {
+        cantonPicker.cantonValueProperty().addListener((observable, oldValue, newValue) -> {
 
             System.out.println(newValue);
-            System.out.println(businessControl.getCantonAbbrAsText());
-            System.out.println(businessControl.getCantonNameAsText());
+            System.out.println(cantonPicker.getCantonAbbrAsText());
+            System.out.println(cantonPicker.getCantonNameAsText());
             System.out.println("-----");
                 cantonImageView.forEach(canton -> {
                     if (canton.getImage().getUrl().contains(newValue.getUrlName())) colorizeImage(canton);

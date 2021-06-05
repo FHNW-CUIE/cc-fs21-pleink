@@ -18,7 +18,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 
-class BusinessSkin extends SkinBase<BusinessControl> {
+class LegacySkin extends SkinBase<CantonPicker> {
     private static final int IMG_SIZE   = 12;
     private static final int IMG_OFFSET = 4;
 
@@ -34,7 +34,7 @@ class BusinessSkin extends SkinBase<BusinessControl> {
 
         State(final String text, final String file) {
             this.text = text;
-            String url = BusinessSkin.class.getResource("/icons/" + file).toExternalForm();
+            String url = LegacySkin.class.getResource("/icons/" + file).toExternalForm();
             this.imageView = new ImageView(new Image(url,
                                                      IMG_SIZE, IMG_SIZE,
                                                      true, false));
@@ -55,7 +55,7 @@ class BusinessSkin extends SkinBase<BusinessControl> {
     private Animation      invalidInputAnimation;
     private FadeTransition fadeOutValidIconAnimation;
 
-    BusinessSkin(BusinessControl control) {
+    LegacySkin(CantonPicker control) {
         super(control);
         initializeSelf();
         initializeParts();

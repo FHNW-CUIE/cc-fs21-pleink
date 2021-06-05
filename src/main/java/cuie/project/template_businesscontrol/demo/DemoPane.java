@@ -3,15 +3,14 @@ package cuie.project.template_businesscontrol.demo;
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-import cuie.project.template_businesscontrol.BusinessControl;
+import cuie.project.template_businesscontrol.CantonPicker;
 
 class DemoPane extends BorderPane {
-    private BusinessControl businessControl;
+    private CantonPicker cantonPicker;
 
     private TextField abbrTextField;
 
@@ -33,7 +32,7 @@ class DemoPane extends BorderPane {
     private void initializeControls() {
         setPadding(new Insets(10));
 
-        businessControl = new BusinessControl();
+        cantonPicker = new CantonPicker();
 
         abbrTextField = new TextField();
 
@@ -47,7 +46,7 @@ class DemoPane extends BorderPane {
     }
 
     private void layoutControls() {
-        setCenter(businessControl);
+        setCenter(cantonPicker);
         VBox box = new VBox(10,
                             new Label("Business Control Properties"),
                             new Label("Canton")      , abbrTextField,
@@ -69,9 +68,9 @@ class DemoPane extends BorderPane {
         mandatoryBox.selectedProperty().bindBidirectional(model.age_mandatoryProperty());
 
 //        businessControl.cantonAbbrAsTextProperty().bindBidirectional(model.cantonAbbrProperty());
-        businessControl.labelProperty()    .bind(model.age_LabelProperty());
-        businessControl.readOnlyProperty() .bind(model.age_readOnlyProperty());
-        businessControl.mandatoryProperty().bind(model.age_mandatoryProperty());
+        cantonPicker.labelProperty()    .bind(model.age_LabelProperty());
+        cantonPicker.readOnlyProperty() .bind(model.age_readOnlyProperty());
+        cantonPicker.mandatoryProperty().bind(model.age_mandatoryProperty());
 
     }
 
