@@ -13,7 +13,7 @@ import cuie.project.template_businesscontrol.BusinessControl;
 class DemoPane extends BorderPane {
     private BusinessControl businessControl;
 
-    private Slider ageSlider;
+    private TextField abbrTextField;
 
     private CheckBox  readOnlyBox;
     private CheckBox  mandatoryBox;
@@ -35,7 +35,7 @@ class DemoPane extends BorderPane {
 
         businessControl = new BusinessControl();
 
-        ageSlider = new Slider(0, 130, 0);
+        abbrTextField = new TextField();
 
         readOnlyBox = new CheckBox();
         readOnlyBox.setSelected(false);
@@ -50,7 +50,7 @@ class DemoPane extends BorderPane {
         setCenter(businessControl);
         VBox box = new VBox(10,
                             new Label("Business Control Properties"),
-                            new Label("Age")      , ageSlider,
+                            new Label("Canton")      , abbrTextField,
                             new Label("readOnly") , readOnlyBox,
                             new Label("mandatory"), mandatoryBox,
                             new Label("Label")    , labelField);
@@ -63,12 +63,12 @@ class DemoPane extends BorderPane {
     }
 
     private void setupBindings() {
-        ageSlider.valueProperty()      .bindBidirectional(model.ageProperty());
+//        abbrTextField.textProperty()   .bindBidirectional(model.cantonAbbrProperty());
         labelField.textProperty()      .bindBidirectional(model.age_LabelProperty());
         readOnlyBox.selectedProperty() .bindBidirectional(model.age_readOnlyProperty());
         mandatoryBox.selectedProperty().bindBidirectional(model.age_mandatoryProperty());
 
-        businessControl.valueProperty()    .bindBidirectional(model.ageProperty());
+//        businessControl.cantonAbbrAsTextProperty().bindBidirectional(model.cantonAbbrProperty());
         businessControl.labelProperty()    .bind(model.age_LabelProperty());
         businessControl.readOnlyProperty() .bind(model.age_readOnlyProperty());
         businessControl.mandatoryProperty().bind(model.age_mandatoryProperty());

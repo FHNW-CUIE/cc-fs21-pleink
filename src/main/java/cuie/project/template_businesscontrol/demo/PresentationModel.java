@@ -8,21 +8,21 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class PresentationModel {
-    private final IntegerProperty age           = new SimpleIntegerProperty(42);
-    private final StringProperty  age_Label     = new SimpleStringProperty("Age");
+    private final StringProperty cantonAbbr           = new SimpleStringProperty();
+    private final StringProperty  age_Label     = new SimpleStringProperty("Canton");
     private final BooleanProperty age_readOnly  = new SimpleBooleanProperty(false);
     private final BooleanProperty age_mandatory = new SimpleBooleanProperty(true);
 
-    public int getAge() {
-        return age.get();
+    public String getCantonAbbr() {
+        return cantonAbbr.get();
     }
 
-    public IntegerProperty ageProperty() {
-        return age;
+    public StringProperty cantonAbbrProperty() {
+        return cantonAbbr;
     }
 
-    public void setAge(int age) {
-        this.age.set(age);
+    public void setCantonAbbr(String cantonAbbr) {
+        this.cantonAbbr.set(cantonAbbr);
     }
 
     public String getAge_Label() {

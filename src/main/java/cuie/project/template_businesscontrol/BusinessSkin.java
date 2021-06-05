@@ -47,7 +47,8 @@ class BusinessSkin extends SkinBase<BusinessControl> {
     // all parts
     private TextField editableNode;
     private Label     readOnlyNode;
-    private PopupControl popup;
+    private Popup     popup;
+    private Pane      dropDownChooser;
     private Button    chooserButton;
 
     private StackPane drawingPane;
@@ -83,7 +84,10 @@ class BusinessSkin extends SkinBase<BusinessControl> {
         chooserButton = new Button(ANGLE_DOWN);
         chooserButton.getStyleClass().add("chooser-button");
 
-        popup = new DropDownChooser(getSkinnable());;
+        dropDownChooser = new DropDownChooser(getSkinnable());
+
+        popup = new Popup();
+        popup.getContent().addAll(dropDownChooser);
 
         drawingPane = new StackPane();
         drawingPane.getStyleClass().add("drawing-pane");
@@ -146,11 +150,15 @@ class BusinessSkin extends SkinBase<BusinessControl> {
 
         popup.setOnShown(event -> {
             chooserButton.setText(ANGLE_UP);
-            Point2D location = editableNode.localToScreen(editableNode.getWidth() - popup.getWidth() - 3,
+            Point2D location = editableNode.localToScreen(editableNode.getWidth() - dropDownChooser.getPrefWidth() - 3,
                                                           editableNode.getHeight() -3);
 
             popup.setX(location.getX());
             popup.setY(location.getY());
+        });
+
+        editableNode.setOnAction(event -> {
+            getSkinnable().formatAbbreviation();
         });
 
         editableNode.setOnKeyPressed(event -> {
@@ -183,8 +191,7 @@ class BusinessSkin extends SkinBase<BusinessControl> {
     }
 
     private void setupBindings() {
-        readOnlyNode.textProperty().bind(getSkinnable().valueProperty().asString(BusinessControl.FORMATTED_INTEGER_PATTERN));
-        editableNode.textProperty().bindBidirectional(getSkinnable().valueAsTextProperty());
+        editableNode.textProperty().bindBidirectional(getSkinnable().cantonAbbrAsTextProperty());
 
         editableNode.promptTextProperty().bind(getSkinnable().labelProperty());
 
@@ -198,6 +205,8 @@ class BusinessSkin extends SkinBase<BusinessControl> {
         State.INVALID.imageView.yProperty().bind(editableNode.translateYProperty().add(editableNode.layoutYProperty()).subtract(IMG_OFFSET));
         State.VALID.imageView.xProperty().bind(editableNode.layoutXProperty().subtract(IMG_OFFSET));
         State.VALID.imageView.yProperty().bind(editableNode.layoutYProperty().subtract(IMG_OFFSET));
+
+
     }
 
     private void startFadeOutValidIconTransition() {

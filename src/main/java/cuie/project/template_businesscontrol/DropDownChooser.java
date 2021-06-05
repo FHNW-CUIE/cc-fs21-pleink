@@ -1,10 +1,6 @@
 package cuie.project.template_businesscontrol;
 
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.PopupControl;
-import javafx.scene.control.SkinBase;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
@@ -14,14 +10,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Popup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
-class DropDownChooser extends PopupControl {
+class DropDownChooser extends VBox {
     private static final String STYLE_CSS = "dropDownChooser.css";
 
     private final BusinessControl businessControl;
@@ -32,8 +26,6 @@ class DropDownChooser extends PopupControl {
     private TextField shortName;
     private TextField longName;
     Region spacer;
-    private Button okButton;
-
 
     private final ImageView aargau =
         new ImageView(new Image(DropDownChooser.class.getResource("/images/aargau.png").toExternalForm()));
@@ -100,6 +92,7 @@ class DropDownChooser extends PopupControl {
         layoutParts();
         setupBindings();
         setupEventHandlers();
+        setupValueChangeListener();
     }
 
     private void initializeSelf() {
@@ -107,20 +100,17 @@ class DropDownChooser extends PopupControl {
         getStyleClass().add("drop-down-chooser");
 
         String stylesheet = getClass().getResource(STYLE_CSS).toExternalForm();
-        setStyle(stylesheet);
+        getStylesheets().add(stylesheet);
     }
 
     private void initializeParts() {
-        shortName = new TextField("BE");
-        longName = new TextField("Bern");
+        shortName = new TextField();
+        longName = new TextField();
 
         shortName.setMaxWidth(64);
         longName.setMaxWidth(196);
         shortName.getStyleClass().add("custom-text-field");
         longName.getStyleClass().add("custom-text-field");
-
-        okButton = new Button("OK");
-        okButton.getStyleClass().add("custom-button");
 
         spacer = new Region();
 
@@ -140,27 +130,65 @@ class DropDownChooser extends PopupControl {
 
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        infoHBox.getChildren().addAll(shortName, longName, spacer, okButton);
+        infoHBox.getChildren().addAll(shortName, longName, spacer);
         mainVBox.getChildren().addAll(mapStackPane, infoHBox);
-        getScene().setRoot(mainVBox);
+        getChildren().addAll(mainVBox);
 
     }
 
     private void setupBindings() {
+        shortName.textProperty().bindBidirectional(businessControl.cantonAbbrAsTextProperty());
+        longName.textProperty().bindBidirectional(businessControl.cantonNameAsTextProperty());
     }
 
     private void setupEventHandlers() {
-
-        okButton.setOnAction(actionEvent -> {
-            //close popup
-        });
 
         cantonImageView.forEach(canton -> canton.setOnMouseClicked(event -> {
             String name = canton.getImage().getUrl();
             name = name.substring(name.lastIndexOf("/")+1, name.lastIndexOf("."));
             System.out.println(name);
+            System.out.println("-----");
             colorizeImage(canton);
+            businessControl.setCantonValueByUrlName(name);
         }));
+
+        shortName.setOnAction(event -> {
+            businessControl.formatAbbreviation();
+        });
+
+        shortName.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case ESCAPE:
+                    businessControl.reset();
+                    event.consume();
+                    break;
+                case UP:
+                    businessControl.increase();
+                    event.consume();
+                    break;
+                case DOWN:
+                    businessControl.decrease();
+                    event.consume();
+                    break;
+            }
+        });
+
+        longName.setOnAction(event -> {
+            businessControl.formatName();
+        });
+    }
+
+    private void setupValueChangeListener() {
+        businessControl.cantonValueProperty().addListener((observable, oldValue, newValue) -> {
+
+            System.out.println(newValue);
+            System.out.println(businessControl.getCantonAbbrAsText());
+            System.out.println(businessControl.getCantonNameAsText());
+            System.out.println("-----");
+                cantonImageView.forEach(canton -> {
+                    if (canton.getImage().getUrl().contains(newValue.getUrlName())) colorizeImage(canton);
+                });
+        });
     }
 
 

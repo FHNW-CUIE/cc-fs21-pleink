@@ -1,22 +1,13 @@
 package cuie.project.template_businesscontrol;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
@@ -31,16 +22,16 @@ public class BusinessControl extends Control {
 
 
     //todo: durch die eigenen regulaeren Ausdruecke ersetzen
-    static final String FORMATTED_INTEGER_PATTERN = "%,d";
+    private final List<Pattern> regexList = new ArrayList<>();
 
-    private static final String INTEGER_REGEX    = "[+-]?[\\d'’]{1,14}";
-    private static final Pattern INTEGER_PATTERN = Pattern.compile(INTEGER_REGEX);
+    private static final String REGEX_ABBR_1 = "(^[a-z][a-z]$)";
 
-    private final Map<String, Canton> cantonMap = new HashMap<>();
 
-    //todo: Integer bei Bedarf ersetzen
-    private final IntegerProperty value       = new SimpleIntegerProperty();
-    private final StringProperty  valueAsText = new SimpleStringProperty();
+    private final Map<String, Canton> cantonMap = new LinkedHashMap<>();
+
+    private  ObjectProperty<Canton> cantonValue = new SimpleObjectProperty<Canton>();
+    private final StringProperty cantonAbbrAsText = new SimpleStringProperty();
+    private final StringProperty cantonNameAsText = new SimpleStringProperty();
 
     private final BooleanProperty mandatory = new SimpleBooleanProperty() {
         @Override
@@ -65,6 +56,7 @@ public class BusinessControl extends Control {
 
     public BusinessControl() {
         initializeSelf();
+        initRegex();
         initCantonList();
         addValueChangeListener();
     }
@@ -74,26 +66,16 @@ public class BusinessControl extends Control {
         return new BusinessSkin(this);
     }
 
-    public void reset() {
-        setValueAsText(convertToString(getValue()));
-    }
-
-    public void increase() {
-        setValue(getValue() + 1);
-    }
-
-    public void decrease() {
-        setValue(getValue() - 1);
-    }
-
     private void initializeSelf() {
          getStyleClass().add("business-control");
 
-         setValueAsText(convertToString(getValue()));
+    }
+
+    private void initRegex() {
+        regexList.add(Pattern.compile(REGEX_ABBR_1));
     }
 
     private void initCantonList() {
-
         try {
             File csvFile = new File((BusinessControl.class.getResource(CSV_RESOURCE).toURI()));
             BufferedReader br = new BufferedReader(new FileReader(csvFile));
@@ -114,31 +96,60 @@ public class BusinessControl extends Control {
 
     //todo: durch geeignete Konvertierungslogik ersetzen
     private void addValueChangeListener() {
-        valueAsText.addListener((observable, oldValue, userInput) -> {
+        cantonAbbrAsText.addListener((observable, oldValue, userInput) -> {
             if (isMandatory() && (userInput == null || userInput.isEmpty())) {
                 setInvalid(true);
                 setErrorMessage("Mandatory Field");
                 return;
             }
 
-            if (isInteger(userInput)) {
+            if (true) {
                 setInvalid(false);
                 setErrorMessage(null);
-                setValue(convertToInt(userInput));
+
             } else {
                 setInvalid(true);
-                setErrorMessage("Not an Integer");
+                setErrorMessage("error");
             }
         });
 
-        valueProperty().addListener((observable, oldValue, newValue) -> {
-            setInvalid(false);
-            setErrorMessage(null);
-            setValueAsText(convertToString(newValue.intValue()));
+        cantonNameAsText.addListener((observable, oldValue, userInput) -> {
+            if (isMandatory() && (userInput == null || userInput.isEmpty())) {
+                setInvalid(true);
+                setErrorMessage("Mandatory Field");
+                return;
+            }
+
+            if (true) {
+                setInvalid(false);
+                setErrorMessage(null);
+
+            } else {
+                setInvalid(true);
+                setErrorMessage("error");
+            }
         });
+
+        cantonValueProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("cantonValue changed");
+            System.out.println("-----");
+            setCantonAbbrAsText(newValue.getAbbreviation().toUpperCase());
+            setCantonNameAsText(newValue.getName());
+        });
+
     }
 
     //todo: Forgiving Format implementieren
+
+    public void formatAbbreviation() {
+        System.out.println("format abbreviation");
+        setCantonValueByAbbreviation(getCantonAbbrAsText());
+    }
+
+    public void formatName() {
+        System.out.println("format name");
+        setCantonValueByName(getCantonNameAsText());
+    }
 
     public void loadFonts(String... font){
         for(String f : font){
@@ -153,34 +164,100 @@ public class BusinessControl extends Control {
         }
     }
 
-    private boolean isInteger(String userInput) {
-        return INTEGER_PATTERN.matcher(userInput).matches();
+
+    public void reset() {
+        setCantonAbbrAsText(getCantonValue().getAbbreviation());
     }
 
-    private int convertToInt(String userInput) {
-        try {
-            return NumberFormat.getInstance(CH).parse(userInput).intValue();
-        } catch (ParseException e) {
-            throw new IllegalArgumentException(e);
+    public void decrease() {
+        Iterator<Map.Entry<String, Canton>> it = cantonMap.entrySet().iterator();
+
+        if (getCantonValue() == null) {
+            setCantonValue(cantonMap.get("zug"));
+        } else {
+            while (it.hasNext()) {
+                if (getCantonValue() == it.next().getValue()) {
+                    if (it.hasNext()) setCantonValue(it.next().getValue());
+                    break;
+                }
+            }
         }
     }
 
-    private String convertToString(int newValue) {
-        return String.format(CH, FORMATTED_INTEGER_PATTERN, newValue);
-    }
+    public void increase() {
+        List<String> allKeys = new ArrayList<String>(cantonMap.keySet());
+        Collections.reverse(allKeys);
+        Iterator<String> it = allKeys.iterator();
 
+        if (getCantonValue() == null) {
+            setCantonValue(cantonMap.get("aargau"));
+        } else {
+            while (it.hasNext()) {
+                if (getCantonValue() == cantonMap.get(it.next())) {
+                    if (it.hasNext()) setCantonValue(cantonMap.get(it.next()));
+                    break;
+                }
+            }
+        }
+    }
 
     // alle  Getter und Setter
-    public int getValue() {
-        return value.get();
+
+
+    public Canton getCantonValue() {
+        return cantonValue.getValue();
     }
 
-    public IntegerProperty valueProperty() {
-        return value;
+    public ObjectProperty<Canton> cantonValueProperty() {
+        return cantonValue;
     }
 
-    public void setValue(int value) {
-        this.value.set(value);
+    public void setCantonValue(Canton canton) {
+        this.cantonValue.setValue(cantonMap.get(canton.getUrlName()));
+    }
+
+    public void setCantonValueByUrlName(String urlName) {
+        this.cantonValue.setValue(cantonMap.get(urlName));
+    }
+
+    public void setCantonValueByAbbreviation(String abbreviation) {
+        String key = null;
+        for (Map.Entry<String, Canton> e : cantonMap.entrySet()) {
+            if (e.getValue().getAbbreviation().equals(abbreviation.toLowerCase())) key = e.getKey();
+        }
+        this.cantonValue.setValue(cantonMap.get(key));
+    }
+
+    public void setCantonValueByName(String name) {
+        String key = null;
+        for (Map.Entry<String, Canton> e : cantonMap.entrySet()) {
+            if (e.getValue().getName().toLowerCase().equals(name.toLowerCase())) key = e.getKey();
+        }
+        this.cantonValue.setValue(cantonMap.get(key));
+    }
+
+    public String getCantonAbbrAsText() {
+        return cantonAbbrAsText.get();
+    }
+
+    public StringProperty cantonAbbrAsTextProperty() {
+        return cantonAbbrAsText;
+    }
+
+    public void setCantonAbbrAsText(String cantonAbbrAsText) {
+        this.cantonAbbrAsText.set(cantonAbbrAsText);
+    }
+
+    public String getCantonNameAsText() {
+        return cantonNameAsText.get();
+    }
+
+    public StringProperty cantonNameAsTextProperty() {
+        return cantonNameAsText;
+    }
+
+    public void setCantonNameAsText(String cantonNameAsText) {
+        this.cantonNameAsText.set(cantonNameAsText);
     }
 
     public boolean isReadOnly() {
@@ -241,18 +318,6 @@ public class BusinessControl extends Control {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage.set(errorMessage);
-    }
-
-    public String getValueAsText() {
-        return valueAsText.get();
-    }
-
-    public StringProperty valueAsTextProperty() {
-        return valueAsText;
-    }
-
-    public void setValueAsText(String valueAsText) {
-        this.valueAsText.set(valueAsText);
     }
 
     public boolean isInvalid() {
