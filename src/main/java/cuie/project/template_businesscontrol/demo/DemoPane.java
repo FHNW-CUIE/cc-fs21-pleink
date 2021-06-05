@@ -72,6 +72,7 @@ class DemoPane extends BorderPane {
         businessControl.labelProperty()    .bind(model.age_LabelProperty());
         businessControl.readOnlyProperty() .bind(model.age_readOnlyProperty());
         businessControl.mandatoryProperty().bind(model.age_mandatoryProperty());
+
     }
 
 }

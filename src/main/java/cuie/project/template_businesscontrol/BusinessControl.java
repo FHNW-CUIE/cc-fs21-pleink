@@ -1,6 +1,7 @@
 package cuie.project.template_businesscontrol;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
@@ -19,9 +20,6 @@ public class BusinessControl extends Control {
     private static final PseudoClass MANDATORY_CLASS = PseudoClass.getPseudoClass("mandatory");
     private static final PseudoClass INVALID_CLASS   = PseudoClass.getPseudoClass("invalid");
     private final String CSV_RESOURCE = "/files/cantons.csv";
-
-
-    //todo: durch die eigenen regulaeren Ausdruecke ersetzen
 
     private static final String REGEX_ABBR_1 = "(^[abfgjlnostuvz][grilseuwhzod]$)";
     private static final String REGEX_ABBR_2 = "(^[fjlou]$)";
@@ -78,7 +76,7 @@ public class BusinessControl extends Control {
     private void initCantonList() {
         try {
             File csvFile = new File((BusinessControl.class.getResource(CSV_RESOURCE).toURI()));
-            BufferedReader br = new BufferedReader(new FileReader(csvFile));
+            BufferedReader br = new BufferedReader(new FileReader(csvFile, StandardCharsets.UTF_8));
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
@@ -94,7 +92,6 @@ public class BusinessControl extends Control {
         }
     }
 
-    //todo: durch geeignete Konvertierungslogik ersetzen
     private void addValueChangeListener() {
         cantonAbbrAsText.addListener((observable, oldValue, userInput) -> {
             if (isMandatory() && (userInput == null || userInput.isEmpty())) {
@@ -114,13 +111,25 @@ public class BusinessControl extends Control {
         });
 
         cantonNameAsText.addListener((observable, oldValue, userInput) -> {
+            System.out.println("userInput: ");
+            System.out.println(userInput);
+            System.out.println("-----");
+
+//            System.out.println("userInput UTF-8: ");
+//            System.out.println(new String(userInput.getBytes(StandardCharsets.UTF_8)));
+//            System.out.println("canton Zürich: ");
+//            String s = new String(cantonMap.get("zuerich").getName().getBytes(StandardCharsets.UTF_8));
+//            System.out.println(s);
+//            System.out.println("userInput == canton");
+//            System.out.println(userInput.equals(cantonMap.get("zuerich").getName()));
+
             if (isMandatory() && (userInput == null || userInput.isEmpty())) {
                 setInvalid(true);
                 setErrorMessage("Mandatory Field");
                 return;
             }
 
-            if (PATTERN_NAME_1.matcher(userInput).matches()) {
+            if (PATTERN_NAME_1.matcher(userInput).matches() || validCanton()) {
                 setInvalid(false);
                 setErrorMessage(null);
 
@@ -144,27 +153,45 @@ public class BusinessControl extends Control {
     public void formatAbbreviation() {
         System.out.println("format abbreviation");
         if (!getInvalid()) {
-            if (getCantonAbbrAsText().length() == 1) {
-                Optional<Map.Entry<String, Canton>> c = cantonMap.entrySet().stream().filter(e -> e.getValue().getAbbreviation().substring(0,1).toLowerCase().equals(getCantonAbbrAsText())).findFirst();
+
+                Optional<Map.Entry<String, Canton>> c = cantonMap.entrySet()
+                        .stream()
+                        .filter(e -> {
+                            String s = e.getValue().getAbbreviation();
+
+                            if (getCantonAbbrAsText().length() == 1) {
+                                s = s.substring(0, 1);
+                            }
+                            return s.toLowerCase().equals(getCantonAbbrAsText());
+                        })
+                        .findFirst();
+
                 c.ifPresent(stringCantonEntry -> setCantonValue(stringCantonEntry.getValue()));
-            } else {
-                Optional<Map.Entry<String, Canton>> c = cantonMap.entrySet().stream().filter(e -> e.getValue().getAbbreviation().toLowerCase().equals(getCantonAbbrAsText())).findFirst();
-                c.ifPresent(stringCantonEntry -> setCantonValue(stringCantonEntry.getValue()));
-            }
         }
     }
 
     public void formatName() {
         System.out.println("format name");
         if (!getInvalid()) {
-            setCantonValueByName(getCantonNameAsText());
-        }
+            Optional<Map.Entry<String, Canton>> c = cantonMap.entrySet().stream()
+                    .filter(e -> {
+                       return  (e.getValue().getName().toLowerCase().contains(getCantonNameAsText().toLowerCase())
+                                || e.getValue().getUrlName().toLowerCase().contains(getCantonNameAsText().toLowerCase()));
+                    }).findFirst();
 
+            c.ifPresent(stringCantonEntry -> setCantonValue(stringCantonEntry.getValue()));
+        }
     }
 
-    public boolean validCanton() {
+    boolean validCanton() {
+        String cantonName = getCantonNameAsText().toLowerCase();
 
-        return true;
+        return cantonMap.entrySet()
+                .stream()
+                .anyMatch(e -> (
+                        e.getValue().getName().toLowerCase().contains(cantonName)
+                                || e.getValue().getUrlName().contains(cantonName))
+                );
     }
 
     public void loadFonts(String... font){

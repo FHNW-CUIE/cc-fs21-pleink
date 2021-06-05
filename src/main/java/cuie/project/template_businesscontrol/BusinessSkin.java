@@ -18,7 +18,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 
-//todo: durch eigenen Skin ersetzen
 class BusinessSkin extends SkinBase<BusinessControl> {
     private static final int IMG_SIZE   = 12;
     private static final int IMG_OFFSET = 4;
