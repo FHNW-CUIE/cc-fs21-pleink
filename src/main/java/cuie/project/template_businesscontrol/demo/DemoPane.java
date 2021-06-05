@@ -25,7 +25,7 @@ class DemoPane extends BorderPane {
 
         initializeControls();
         layoutControls();
-        setupValueChangeListeners();
+        setupEventHandlers();
         setupBindings();
     }
 
@@ -58,16 +58,17 @@ class DemoPane extends BorderPane {
         setRight(box);
     }
 
-    private void setupValueChangeListeners() {
+    private void setupEventHandlers() {
+        abbrTextField.setOnAction(event -> cantonPicker.formatAbbreviation());
     }
 
     private void setupBindings() {
-//        abbrTextField.textProperty()   .bindBidirectional(model.cantonAbbrProperty());
+        abbrTextField.textProperty()   .bindBidirectional(model.cantonAbbrProperty());
         labelField.textProperty()      .bindBidirectional(model.age_LabelProperty());
         readOnlyBox.selectedProperty() .bindBidirectional(model.age_readOnlyProperty());
         mandatoryBox.selectedProperty().bindBidirectional(model.age_mandatoryProperty());
 
-//        businessControl.cantonAbbrAsTextProperty().bindBidirectional(model.cantonAbbrProperty());
+        cantonPicker.cantonAbbrAsTextProperty().bindBidirectional(model.cantonAbbrProperty());
         cantonPicker.labelProperty()    .bind(model.age_LabelProperty());
         cantonPicker.readOnlyProperty() .bind(model.age_readOnlyProperty());
         cantonPicker.mandatoryProperty().bind(model.age_mandatoryProperty());

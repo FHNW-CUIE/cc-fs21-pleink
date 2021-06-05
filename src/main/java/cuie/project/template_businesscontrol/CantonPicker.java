@@ -18,8 +18,8 @@ public class CantonPicker extends Control {
     private static final PseudoClass INVALID_CLASS   = PseudoClass.getPseudoClass("invalid");
     private final String CSV_RESOURCE = "/files/cantons.csv";
 
-    private static final String REGEX_ABBR_1 = "(^[abfgjlnostuvz][grilseuwhzod]$)";
-    private static final String REGEX_ABBR_2 = "(^[fjlou]$)";
+    private static final String REGEX_ABBR_1 = "(^[abfgjlnostuvz][grilseuwhzod]|[ABFGJLNOSTUVZ][GRILSEUWHZOD]$)";
+    private static final String REGEX_ABBR_2 = "(^[fjlou]|[FJLOU]$)";
     private static final String REGEX_NAME_1 = "(\\b[^\\d]+\\b)";
 
     private static final Pattern PATTERN_ABBR_1 = Pattern.compile(REGEX_ABBR_1);
@@ -145,7 +145,7 @@ public class CantonPicker extends Control {
                             if (getCantonAbbrAsText().length() == 1) {
                                 s = s.substring(0, 1);
                             }
-                            return s.toLowerCase().equals(getCantonAbbrAsText());
+                            return s.toLowerCase().equals(getCantonAbbrAsText().toLowerCase());
                         })
                         .findFirst();
 
