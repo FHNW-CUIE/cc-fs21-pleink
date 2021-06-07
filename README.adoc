@@ -11,7 +11,7 @@
 
 === Features
 Unser BusinessControll "CantonPicker" hilft bei der Eingabe des Kantonsfeldes.
-image::./assets/CantonPicker.png[Screenshot, 500, 500]
+image::./assets/CantonPicker.jpg[Screenshot, 500, 500]
 
 
 * Auswählen des Kantons per Maus auf einer Schweizerkarte.
