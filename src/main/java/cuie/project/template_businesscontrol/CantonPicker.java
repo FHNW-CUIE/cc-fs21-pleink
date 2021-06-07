@@ -11,6 +11,9 @@ import javafx.css.PseudoClass;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.text.Font;
+import javafx.util.StringConverter;
+
+import static java.lang.Math.abs;
 
 public class CantonPicker extends Control {
     private static Locale CH = new Locale("de", "CH");
@@ -29,7 +32,12 @@ public class CantonPicker extends Control {
     private final Map<String, Canton> cantonMap = new LinkedHashMap<>();
 
     private  ObjectProperty<Canton> cantonValue = new SimpleObjectProperty<Canton>();
-    private final StringProperty cantonAbbrAsText = new SimpleStringProperty();
+    private final StringProperty cantonAbbrAsText = new SimpleStringProperty() {
+        @Override
+        public void set(String newValue) {
+            super.set(newValue.toUpperCase());
+        }
+    };
     private final StringProperty cantonNameAsText = new SimpleStringProperty();
 
     private final BooleanProperty mandatory = new SimpleBooleanProperty() {
@@ -88,6 +96,8 @@ public class CantonPicker extends Control {
 
     private void addValueChangeListener() {
         cantonAbbrAsText.addListener((observable, oldValue, userInput) -> {
+
+
             if (isMandatory() && (userInput == null || userInput.isEmpty())) {
                 setInvalid(true);
                 setErrorMessage("Mandatory Field");
@@ -97,7 +107,7 @@ public class CantonPicker extends Control {
             if (PATTERN_ABBR_1.matcher(userInput).matches() || PATTERN_ABBR_2.matcher(userInput).matches()) {
                 setInvalid(false);
                 setErrorMessage(null);
-
+                formatAbbreviation();
             } else {
                 setInvalid(true);
                 setErrorMessage("incorrect canton abbreviation");
@@ -115,10 +125,9 @@ public class CantonPicker extends Control {
                 return;
             }
 
-            if (PATTERN_NAME_1.matcher(userInput).matches() || validCanton()) {
+            if (PATTERN_NAME_1.matcher(userInput).matches() && validCanton()) {
                 setInvalid(false);
                 setErrorMessage(null);
-
             } else {
                 setInvalid(true);
                 setErrorMessage("incorrect canton name");
@@ -128,7 +137,7 @@ public class CantonPicker extends Control {
         cantonValueProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("cantonValue changed");
             System.out.println("-----");
-            setCantonAbbrAsText(newValue.getAbbreviation().toUpperCase());
+            setCantonAbbrAsText(newValue.getAbbreviation());
             setCantonNameAsText(newValue.getName());
         });
     }
@@ -137,7 +146,7 @@ public class CantonPicker extends Control {
         System.out.println("format abbreviation");
         if (!getInvalid()) {
 
-                Optional<Map.Entry<String, Canton>> c = cantonMap.entrySet()
+            Optional<Map.Entry<String, Canton>> c = cantonMap.entrySet()
                         .stream()
                         .filter(e -> {
                             String s = e.getValue().getAbbreviation();
@@ -189,11 +198,11 @@ public class CantonPicker extends Control {
         }
     }
 
-    public void reset() {
+    void reset() {
         setCantonAbbrAsText(getCantonValue().getAbbreviation());
     }
 
-    public void decrease() {
+    void decrease() {
         Iterator<Map.Entry<String, Canton>> it = cantonMap.entrySet().iterator();
 
         if (getCantonValue() == null) {
@@ -208,7 +217,7 @@ public class CantonPicker extends Control {
         }
     }
 
-    public void increase() {
+    void increase() {
         List<String> allKeys = new ArrayList<String>(cantonMap.keySet());
         Collections.reverse(allKeys);
         Iterator<String> it = allKeys.iterator();
@@ -276,11 +285,11 @@ public class CantonPicker extends Control {
         return cantonNameAsText.get();
     }
 
-    public StringProperty cantonNameAsTextProperty() {
+    StringProperty cantonNameAsTextProperty() {
         return cantonNameAsText;
     }
 
-    public void setCantonNameAsText(String cantonNameAsText) {
+    void setCantonNameAsText(String cantonNameAsText) {
         this.cantonNameAsText.set(cantonNameAsText);
     }
 

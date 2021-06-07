@@ -8,7 +8,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class PresentationModel {
-    private final StringProperty cantonAbbr           = new SimpleStringProperty();
+    private final StringProperty cantonAbbr           = new SimpleStringProperty("lu");
     private final StringProperty  age_Label     = new SimpleStringProperty("Canton");
     private final BooleanProperty age_readOnly  = new SimpleBooleanProperty(false);
     private final BooleanProperty age_mandatory = new SimpleBooleanProperty(true);

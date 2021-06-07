@@ -142,6 +142,7 @@ class LegacySkin extends SkinBase<CantonPicker> {
                 popup.hide();
             } else {
                 popup.show(editableNode.getScene().getWindow());
+                popup.requestFocus();
             }
         });
 
@@ -176,6 +177,10 @@ class LegacySkin extends SkinBase<CantonPicker> {
                     break;
             }
         });
+
+        editableNode.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue) editableNode.setText(getSkinnable().getCantonAbbrAsText());
+        });
     }
 
     private void setupValueChangedListeners() {
@@ -191,6 +196,7 @@ class LegacySkin extends SkinBase<CantonPicker> {
 
     private void setupBindings() {
         editableNode.textProperty().bindBidirectional(getSkinnable().cantonAbbrAsTextProperty());
+        readOnlyNode.textProperty().bindBidirectional(getSkinnable().cantonAbbrAsTextProperty());
 
         editableNode.promptTextProperty().bind(getSkinnable().labelProperty());
 

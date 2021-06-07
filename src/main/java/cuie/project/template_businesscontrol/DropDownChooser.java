@@ -91,6 +91,7 @@ class DropDownChooser extends VBox {
         setupBindings();
         setupEventHandlers();
         setupValueChangeListener();
+        updateMap();
     }
 
     private void initializeSelf() {
@@ -185,6 +186,11 @@ class DropDownChooser extends VBox {
                     if (canton.getImage().getUrl().contains(newValue.getUrlName())) colorizeImage(canton);
                 });
         });
+
+        shortName.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue) shortName.setText(cantonPicker.getCantonAbbrAsText());
+        });
+
     }
 
 
@@ -195,6 +201,14 @@ class DropDownChooser extends VBox {
         cantonImageView.forEach(c -> c.setEffect(monochrome));
 
         canton.setEffect(null);
+    }
+
+    private void updateMap() {
+        if (cantonPicker.getCantonValue() != null) {
+            cantonImageView.forEach(canton -> {
+                if (canton.getImage().getUrl().contains(cantonPicker.getCantonValue().getUrlName())) colorizeImage(canton);
+            });
+        }
     }
 
 }
