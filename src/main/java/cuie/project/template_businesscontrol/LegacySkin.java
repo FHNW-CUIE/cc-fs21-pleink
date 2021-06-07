@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import javafx.util.Duration;
@@ -44,12 +45,14 @@ class LegacySkin extends SkinBase<CantonPicker> {
     private static final String STYLE_CSS = "style.css";
 
     // all parts
+    private Label     labelNode;
     private TextField editableNode;
     private Label     readOnlyNode;
     private Popup     popup;
     private Pane      dropDownChooser;
     private Button    chooserButton;
 
+    private VBox      mainVBox;
     private StackPane drawingPane;
 
     private Animation      invalidInputAnimation;
@@ -72,6 +75,9 @@ class LegacySkin extends SkinBase<CantonPicker> {
     }
 
     private void initializeParts() {
+        labelNode = new Label();
+        labelNode.getStyleClass().add("label-node");
+
         editableNode = new TextField();
         editableNode.getStyleClass().add("editable-node");
 
@@ -88,11 +94,14 @@ class LegacySkin extends SkinBase<CantonPicker> {
         popup = new Popup();
         popup.getContent().addAll(dropDownChooser);
 
+        mainVBox = new VBox(8);
+
         drawingPane = new StackPane();
         drawingPane.getStyleClass().add("drawing-pane");
     }
 
     private void layoutParts() {
+
         StackPane.setAlignment(chooserButton, Pos.CENTER_RIGHT);
         drawingPane.getChildren().addAll(editableNode, chooserButton, readOnlyNode);
 
@@ -106,7 +115,9 @@ class LegacySkin extends SkinBase<CantonPicker> {
         StackPane.setAlignment(editableNode, Pos.CENTER_LEFT);
         StackPane.setAlignment(readOnlyNode, Pos.CENTER_LEFT);
 
-        getChildren().add(drawingPane);
+        mainVBox.getChildren().addAll(labelNode,drawingPane);
+
+        getChildren().add(mainVBox);
     }
 
     private void setupAnimations() {
@@ -195,6 +206,7 @@ class LegacySkin extends SkinBase<CantonPicker> {
     }
 
     private void setupBindings() {
+        labelNode.textProperty().bindBidirectional(getSkinnable().labelProperty());
         editableNode.textProperty().bindBidirectional(getSkinnable().cantonAbbrAsTextProperty());
         readOnlyNode.textProperty().bindBidirectional(getSkinnable().cantonAbbrAsTextProperty());
 

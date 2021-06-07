@@ -1,11 +1,15 @@
 .business-control {
     -fx-padding:          10;
-    -base-color:          rgb(255, 201, 104);
+    -base-color:          rgb(86, 185, 240);
     -fx-background-color: rgb(255, 255, 250);
 }
 
 .business-control .drawing-pane {
     -fx-background-color: transparent;
+}
+
+.business-control .label-node {
+    -fx-font-family:      'Lato Regular';
 }
 
 .business-control .editable-node {
@@ -40,13 +44,13 @@
 }
 
 .business-control .read-only-node {
-    -fx-font-family:     'DS-Digital';
+    -fx-font-family: 'Lato Regular';
     -fx-pref-width:      80;
     -fx-max-width:       1024;
     -fx-alignment:       center;
     -fx-content-display: text-only;
     -fx-font-size:       22;
-    -fx-text-fill:       rgb(139, 86, 70);
+    -fx-text-fill:        derive(-base-color, -30%);
 }
 
 .business-control .chooser-button {
