@@ -143,8 +143,6 @@ class DropDownChooser extends VBox {
         cantonImageView.forEach(canton -> canton.setOnMouseClicked(event -> {
             String name = canton.getImage().getUrl();
             name = name.substring(name.lastIndexOf("/")+1, name.lastIndexOf("."));
-            System.out.println(name);
-            System.out.println("-----");
             colorizeImage(canton);
             cantonPicker.setCantonValueByUrlName(name);
         }));
@@ -178,10 +176,6 @@ class DropDownChooser extends VBox {
     private void setupValueChangeListener() {
         cantonPicker.cantonValueProperty().addListener((observable, oldValue, newValue) -> {
 
-            System.out.println(newValue);
-            System.out.println(cantonPicker.getCantonAbbrAsText());
-            System.out.println(cantonPicker.getCantonNameAsText());
-            System.out.println("-----");
                 cantonImageView.forEach(canton -> {
                     if (canton.getImage().getUrl().contains(newValue.getUrlName())) colorizeImage(canton);
                 });

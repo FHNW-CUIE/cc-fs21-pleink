@@ -115,10 +115,6 @@ public class CantonPicker extends Control {
         });
 
         cantonNameAsText.addListener((observable, oldValue, userInput) -> {
-            System.out.println("userInput: ");
-            System.out.println(userInput);
-            System.out.println("-----");
-
             if (isMandatory() && (userInput == null || userInput.isEmpty())) {
                 setInvalid(true);
                 setErrorMessage("Mandatory Field");
@@ -135,15 +131,12 @@ public class CantonPicker extends Control {
         });
 
         cantonValueProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("cantonValue changed");
-            System.out.println("-----");
             setCantonAbbrAsText(newValue.getAbbreviation());
             setCantonNameAsText(newValue.getName());
         });
     }
 
     public void formatAbbreviation() {
-        System.out.println("format abbreviation");
         if (!getInvalid()) {
 
             Optional<Map.Entry<String, Canton>> c = cantonMap.entrySet()
@@ -163,7 +156,6 @@ public class CantonPicker extends Control {
     }
 
     public void formatName() {
-        System.out.println("format name");
         if (!getInvalid()) {
             Optional<Map.Entry<String, Canton>> c = cantonMap.entrySet().stream()
                     .filter(e -> (e.getValue().getName().toLowerCase().contains(getCantonNameAsText().toLowerCase())
