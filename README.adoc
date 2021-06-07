@@ -11,6 +11,8 @@
 
 === Features
 Unser BusinessControll "CantonPicker" hilft bei der Eingabe des Kantonsfeldes.
+image::./src/main/resources/images/CantonPicker.png[Screenshot, 500, 500]
+
 ![CantonPicker](https://github.com/FHNW-CUIE/cc-fs21-pleink/blob/master/src/main/resources/images/CantonPicker.png?raw=true)
 * Auswählen des Kantons per Maus auf einer Schweizerkarte.
 * Eingabe per Tastatur, wobei die Abkürzung automatisch eingefüllt wird.
