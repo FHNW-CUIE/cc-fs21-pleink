@@ -1,4 +1,4 @@
-package cuie.project.template_businesscontrol.demo;
+package cuie.PhTs.template_businesscontrol.demo;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
@@ -7,7 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-import cuie.project.template_businesscontrol.CantonPicker;
+import cuie.PhTs.template_businesscontrol.CantonPicker;
 
 class DemoPane extends BorderPane {
     private CantonPicker cantonPicker;

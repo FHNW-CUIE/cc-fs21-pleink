@@ -2,11 +2,20 @@
 
 === Bearbeitet von
 
-* _Vorname Nachname_
+* Pascal Hostettler
+* Tiziano Schacht
 
 === Integriert in die OOP2-Projekte von
 
 * *_Ergänzen Sie hier welche OOP2-Teams Ihr Projekt erfolgreich integriert haben._*
+
+=== Features
+Unser BusinessControll "CantonPicker" hilft bei der Eingabe des Kantonsfeldes.
+![CantonPicker](https://github.com/FHNW-CUIE/cc-fs21-pleink/blob/master/src/main/resources/images/CantonPicker.png)
+* Auswählen des Kantons per Maus auf einer Schweizerkarte.
+* Eingabe per Tastatur, wobei die Abkürzung automatisch eingefüllt wird.
+* Es kann auch nur einen Teil des Kantons eingegeben werden (mit Enter bestätigen). z.B. "land" wird zu Basel Land.
+* Mit den Pfeiltasten "UP" und "DOWN" können die Kantone durchgegangen werden.
 
 === Abgabe
 

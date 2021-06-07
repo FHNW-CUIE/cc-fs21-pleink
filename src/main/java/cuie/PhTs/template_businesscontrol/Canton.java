@@ -1,6 +1,4 @@
-package cuie.project.template_businesscontrol;
-
-import java.nio.charset.StandardCharsets;
+package cuie.PhTs.template_businesscontrol;
 
 public class Canton {
     private final String urlName;
