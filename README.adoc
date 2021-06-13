@@ -13,7 +13,8 @@ Pascal Hostettler & Tiziano Schacht
 
 === Features
 Unser BusinessControll "CantonPicker" hilft bei der Eingabe des Kantonsfeldes.
-image::CantonPicker.jpg[Screenshot, 500, 500]
+
+image::CantonPicker.jpg[Screenshot, 500]
 
 * Auswählen des Kantons per Maus auf einer Schweizerkarte.
 * Eingabe per Tastatur, wobei die Abkürzung automatisch eingefüllt wird.
