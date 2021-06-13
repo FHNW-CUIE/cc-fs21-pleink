@@ -1,4 +1,6 @@
-== CUIE Abschlussprojekt
+= CUIE Abschlussprojekt
+Pascal Hostettler & Tiziano Schacht
+:imagesdir: assets
 
 === Bearbeitet von
 
@@ -11,8 +13,7 @@
 
 === Features
 Unser BusinessControll "CantonPicker" hilft bei der Eingabe des Kantonsfeldes.
-![image](https://github.com/FHNW-CUIE/cc-fs21-pleink/blob/master/assets/CantonPicker.jpg?raw=true)
-
+image::CantonPicker.jpg[Screenshot, 500, 500]
 
 * Auswählen des Kantons per Maus auf einer Schweizerkarte.
 * Eingabe per Tastatur, wobei die Abkürzung automatisch eingefüllt wird.
